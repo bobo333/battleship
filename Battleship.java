@@ -1,16 +1,5 @@
 import java.util.Scanner;
 
-// gameboard
-// display, holds ships, where has been shot, which were hits
-
-// ships
-// size, is sunk, hit locations
-
-// game
-// turns, wipes screen and shows new display, gets input
-
-
-
 class Battleship {
     public static void main(String[] args) {
         System.out.println("Welcome to Battleship!");

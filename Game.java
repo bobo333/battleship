@@ -23,6 +23,8 @@ class Game {
 
             // show board result
             System.out.println();
+
+            // TODO: how to clear console here instead?
             board.showBoard();
 
             if (result == GuessResult.REPEAT) {
