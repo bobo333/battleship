@@ -39,14 +39,23 @@ class GameBoard {
         int a = (int) 'A';
         for (int i = 0; i < this.grid.length; i++) {
             String letter = String.valueOf((char) ((char) a + i));
-
             System.out.print(letter + " "); 
 
             for (GameBoardHole place: this.grid[i]) {
                 System.out.print(place + " ");
             }
+
+            // show letters on right sides of the rows as well
+            System.out.print(letter + " "); 
             System.out.println();
         }
+
+        // show numbers at bottom of board as well
+        System.out.print("  ");
+        for (int i = 1; i <= 10; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
     }
 
     public GuessResult makeShot(Guess guess) {
