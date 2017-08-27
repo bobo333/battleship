@@ -69,6 +69,16 @@ class GameBoard {
         return hole.getShotResult();
     }
 
+    public boolean isGameOver() {
+        // check if all ships are sunk
+        for (Ship ship: this.ships) {
+            if (!ship.isSunk()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void addToBoard(Ship ship) {
         ThreadLocalRandom rand = ThreadLocalRandom.current();
         Orientation[] orientations = Orientation.values();
@@ -114,16 +124,6 @@ class GameBoard {
         } catch (ArrayIndexOutOfBoundsException e) {
             // off the board
             return false;
-        }
-        return true;
-    }
-
-    public boolean isGameOver() {
-        // check if all ships are sunk
-        for (Ship ship: this.ships) {
-            if (!ship.isSunk()) {
-                return false;
-            }
         }
         return true;
     }

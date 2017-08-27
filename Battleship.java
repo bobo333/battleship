@@ -11,7 +11,7 @@ class Battleship {
             game.play();
 
             System.out.print("Would you like to play again? (y/n) ");
-            if (!reader.nextLine().toLowerCase().equals("y")) keepPlaying = false;
+            keepPlaying = reader.nextLine().toLowerCase().equals("y");
         }
 
     }
