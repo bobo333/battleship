@@ -10,7 +10,6 @@ class Battleship {
             Game game = new Game(reader);
             game.play();
 
-            
             System.out.print("Would you like to play again? (y/n) ");
             if (!reader.nextLine().toLowerCase().equals("y")) keepPlaying = false;
         }

@@ -23,13 +23,14 @@ class GameBoard {
 
         this.ships = new Ship[]{cruiser, submarine, destroyer, battleship, carrier};
 
-        // place ships
+        // add ships to board
         for (Ship ship: this.ships) {
             addToBoard(ship);
         }
     }
 
     public void showBoard() {
+        // show column numbers at top of board
         System.out.print("  ");
         for (int i = 1; i <= 10; i++) {
             System.out.print(i + " ");
@@ -38,19 +39,20 @@ class GameBoard {
 
         int a = (int) 'A';
         for (int i = 0; i < this.grid.length; i++) {
+            // show row letter at left of row
             String letter = String.valueOf((char) ((char) a + i));
             System.out.print(letter + " "); 
 
-            for (GameBoardHole place: this.grid[i]) {
-                System.out.print(place + " ");
+            for (GameBoardHole hole: this.grid[i]) {
+                System.out.print(hole + " ");
             }
 
-            // show letters on right sides of the rows as well
+            // show row letter on right side of the row
             System.out.print(letter + " "); 
             System.out.println();
         }
 
-        // show numbers at bottom of board as well
+        // show numbers at bottom of board
         System.out.print("  ");
         for (int i = 1; i <= 10; i++) {
             System.out.print(i + " ");
@@ -60,27 +62,20 @@ class GameBoard {
 
     public GuessResult makeShot(Guess guess) {
         GameBoardHole hole = this.grid[guess.row][guess.column];
-
         if (hole.alreadyShot) {
             return GuessResult.REPEAT;
         }
-
         hole.shoot();
-
-        if (hole instanceof ShipHole) {
-            return GuessResult.HIT;
-        } else {
-            return GuessResult.MISS;
-        }
+        return hole.getShotResult();
     }
 
     private void addToBoard(Ship ship) {
-        // get random row and column
         ThreadLocalRandom rand = ThreadLocalRandom.current();
         Orientation[] orientations = Orientation.values();
 
         boolean added = false;
         while (!added) {
+            // get random row, column and orientation
             int row = rand.nextInt(0, 11);
             int column = rand.nextInt(0, 11);
             Orientation orientation = orientations[rand.nextInt(0, 2)];
@@ -103,15 +98,12 @@ class GameBoard {
     }
 
     private boolean hasShip(int row, int column) {
-        if (this.grid[row][column] instanceof ShipHole) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.grid[row][column].hasShip();
     }
 
     private boolean canFit(Ship ship, int row, int column, Orientation orientation) {
         try {
+            // check that none of the holes already have a ship
             for (int i = 0; i < ship.size; i++) {
                 if (orientation == Orientation.HORIZONTAL){
                     if (hasShip(row, column + i)) return false;
@@ -127,6 +119,7 @@ class GameBoard {
     }
 
     public boolean isGameOver() {
+        // check if all ships are sunk
         for (Ship ship: this.ships) {
             if (!ship.isSunk()) {
                 return false;

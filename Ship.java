@@ -7,7 +7,6 @@ class Ship {
 
     public Ship(int size) {
         this.size = size;
-
         holes = new ShipHole[this.size];
 
         for (int i = 0; i < holes.length; i++) {
@@ -17,7 +16,7 @@ class Ship {
 
     public boolean isSunk() {
         for (ShipHole hole: this.holes) {
-            if (!hole.alreadyShot) {
+            if (!hole.isAlreadyShot()) {
                 return false;
             }
         }

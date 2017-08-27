@@ -77,4 +77,3 @@ class Game {
         return letter.charAt(0) - 'a';
     }
 }
-
