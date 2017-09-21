@@ -1,35 +1,38 @@
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.EOFException;
 import java.net.Socket;
 import java.net.ServerSocket;
 
 class TCPServer {
     public static void main(String args[]) throws Exception {
-        String clientSentence;
-        String capitalizedSentence;
+        TcpMessage clientInput;
+        TcpMessage clientOutput;
         ServerSocket welcomeSocket = new ServerSocket(6666);
         Socket connectionSocket = welcomeSocket.accept();
         System.out.println("Connection established");
-        BufferedReader inFromClient;
-        DataOutputStream outToClient;
+        ObjectOutputStream outToClient;
+        ObjectInputStream inFromClient;
+        inFromClient = new ObjectInputStream(connectionSocket.getInputStream());
+        outToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
 
         while (true) {
-            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-            clientSentence = inFromClient.readLine();
-
-            if (clientSentence  == null) {
+            try {
+                clientInput = (TcpMessage) inFromClient.readObject();
+            } catch (EOFException e) {
                 System.out.println("Connection closed");
                 connectionSocket = welcomeSocket.accept();
                 System.out.println("Connection re-established");
+                inFromClient = new ObjectInputStream(connectionSocket.getInputStream());
+                outToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
                 continue;
             }
             
-            System.out.println("Received: " + clientSentence);
-            capitalizedSentence = clientSentence.toUpperCase() + '\n';
-            outToClient.writeBytes(capitalizedSentence);
+            System.out.println("Received: " + clientInput);
+            clientOutput = new TcpMessage(clientInput.getMessage().toUpperCase());
+
+            outToClient.writeObject(clientOutput);
         }
     }
 }

@@ -2,7 +2,22 @@
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
+
+class TcpMessage implements Serializable {
+    private String message;
+
+    public TcpMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+}
 
 class TCPClient {
     public static void main(String args[]) throws Exception {
@@ -11,15 +26,13 @@ class TCPClient {
 
         BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
         Socket clientSocket = new Socket("localhost", 6666);
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        ObjectOutputStream objOut = new ObjectOutputStream(clientSocket.getOutputStream());
+        ObjectInputStream objIn = new ObjectInputStream(clientSocket.getInputStream());
         
         boolean keepGoing = true;
 
         while (keepGoing) {
             sentence = inFromUser.readLine();
-
-            System.out.println(sentence);
 
             if (sentence.isEmpty()) {
                 keepGoing = false;
@@ -28,9 +41,11 @@ class TCPClient {
 
             System.out.println(sentence);
 
-            outToServer.writeBytes(sentence + '\n');
-            modifiedSentence = inFromServer.readLine();
-            System.out.println("FROM SERVER: " + modifiedSentence);
+            TcpMessage outgoingMessage = new TcpMessage(sentence);
+            objOut.writeObject(outgoingMessage);
+
+            TcpMessage incomingMessage = (TcpMessage) objIn.readObject();
+            System.out.println("FROM SERVER: " + incomingMessage.getMessage());
         }
 
         clientSocket.close();
